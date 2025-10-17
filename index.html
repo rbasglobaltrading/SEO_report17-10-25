@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive SEO Report for rbasglobal.com</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Actionable Colors -->
+    <!-- Application Structure Plan: A dashboard-style single-page application is used to provide an immediate high-level overview and intuitive navigation. The structure includes a main summary section with a score gauge, followed by a tabbed interface to logically group detailed findings into 'On-Page', 'Technical', 'Performance', 'Security', and 'Off-Page' categories. This structure was chosen over a linear report format to allow users to quickly assess the overall status and then dive into specific areas of interest without overwhelming them with a long scroll. This task-oriented design helps users, from executives to developers, find the information relevant to them efficiently. -->
+    <!-- Visualization & Content Choices: The overall score is visualized as a donut chart (Chart.js) for high visual impact. Key stats (errors, improvements) are presented in clear summary cards. Specific findings are detailed in structured cards, color-coded by severity for quick identification. Actionable items like missing code are presented in copy-able code blocks. This approach was chosen to translate static data points from the report into a clear, understandable, and actionable format. The goal is to inform and guide the user toward solutions directly within the interface. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 250px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 250px;
+        }
+        .nav-link {
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-link.active {
+            background-color: #3b82f6; /* blue-500 */
+            color: white;
+            font-weight: 600;
+        }
+        .nav-link:not(.active):hover {
+            background-color: #eff6ff; /* blue-50 */
+        }
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .status-pass { background-color: #10b981; } /* green-500 */
+        .status-improve { background-color: #f59e0b; } /* amber-500 */
+        .status-error { background-color: #ef4444; } /* red-500 */
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        
+        <header class="mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900">Interactive SEO Report</h1>
+            <p class="text-lg text-slate-600">Analysis for: <a href="https://rbasglobal.com" target="_blank" class="text-blue-600 hover:underline">rbasglobal.com</a></p>
+        </header>
+
+        <!-- Main Dashboard -->
+        <div id="dashboard" class="bg-white p-6 rounded-2xl shadow-lg mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-slate-900">Overall Score</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                <div class="md:col-span-1">
+                    <div class="chart-container">
+                        <canvas id="scoreChart"></canvas>
+                         <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-5xl font-bold text-slate-800">73</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:col-span-2 space-y-4">
+                    <div>
+                        <p class="text-slate-700 leading-relaxed">
+                            A score of <span class="font-bold">73/100</span> indicates that the website is generally well-optimized but has several key areas for improvement that could significantly boost its performance, visibility, and security. This dashboard breaks down the findings from the WooRank review into actionable steps.
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                        <div class="bg-red-50 border border-red-200 p-4 rounded-lg">
+                            <p class="text-3xl font-bold text-red-600">2</p>
+                            <p class="text-sm font-semibold text-red-800">Critical Errors</p>
+                        </div>
+                        <div class="bg-amber-50 border border-amber-200 p-4 rounded-lg">
+                            <p class="text-3xl font-bold text-amber-600">10+</p>
+                            <p class="text-sm font-semibold text-amber-800">Areas to Improve</p>
+                        </div>
+                         <div class="bg-green-50 border border-green-200 p-4 rounded-lg">
+                            <p class="text-3xl font-bold text-green-600">20+</p>
+                            <p class="text-sm font-semibold text-green-800">Checks Passed</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation and Content -->
+        <div class="flex flex-col md:flex-row gap-8">
+            <!-- Sidebar Navigation -->
+            <aside class="md:w-1/4">
+                <nav class="sticky top-8">
+                    <ul class="space-y-2">
+                        <li><button class="nav-link w-full text-left p-3 rounded-lg active" data-target="on-page">On-Page SEO</button></li>
+                        <li><button class="nav-link w-full text-left p-3 rounded-lg" data-target="technical">Technical SEO</button></li>
+                        <li><button class="nav-link w-full text-left p-3 rounded-lg" data-target="performance">Performance</button></li>
+                        <li><button class="nav-link w-full text-left p-3 rounded-lg" data-target="security">Security</button></li>
+                        <li><button class="nav-link w-full text-left p-3 rounded-lg" data-target="off-page">Off-Page Presence</button></li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="md:w-3/4">
+                
+                <!-- On-Page SEO Section -->
+                <section id="on-page" class="content-section space-y-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-lg">
+                        <h2 class="text-2xl font-bold mb-2 text-slate-900">On-Page SEO</h2>
+                        <p class="text-slate-600 mb-6">This section covers elements within your website's content and HTML source code. Optimizing these factors helps search engines understand your content's context and relevance to user queries, directly impacting your rankings.</p>
+                        
+                        <!-- Title Tag Card -->
+                        <div class="border border-slate-200 p-4 rounded-lg mb-4">
+                           <h3 class="font-bold text-lg flex items-center"><span class="status-dot status-pass mr-3"></span>Title Tag</h3>
+                           <p class="mt-2 text-slate-700">The title tag is well-written and within the recommended length (64 characters). It clearly communicates the page's topic to both search engines and users.</p>
+                        </div>
+
+                        <!-- Meta Description Card -->
+                        <div class="border border-slate-200 p-4 rounded-lg mb-4">
+                           <h3 class="font-bold text-lg flex items-center"><span class="status-dot status-improve mr-3"></span>Meta Description</h3>
+                           <p class="mt-2 text-slate-700">The meta description is too short at 140 characters. This is a missed opportunity to entice users in search results.</p>
+                           <div class="mt-3 bg-amber-50 p-3 rounded-md">
+                               <p class="font-semibold text-amber-800">Recommendation:</p>
+                               <p class="text-amber-700 text-sm">Expand the meta description to be between 150-160 characters. Include your primary keywords and a compelling call-to-action to improve click-through rates from search results.</p>
+                           </div>
+                        </div>
+
+                        <!-- Headings Card -->
+                        <div class="border border-slate-200 p-4 rounded-lg mb-4">
+                           <h3 class="font-bold text-lg flex items-center"><span class="status-dot status-improve mr-3"></span>Headings</h3>
+                           <p class="mt-2 text-slate-700">The homepage is missing a critical H1 tag. H1 tags are the most important heading and should summarize the page's content. The page does correctly use H2 and H3 tags for subheadings.</p>
+                            <div class="mt-3 bg-amber-50 p-3 rounded-md">
+                               <p class="font-semibold text-amber-800">Recommendation:</p>
+                               <p class="text-amber-700 text-sm">Add a single, unique H1 tag to the homepage that incorporates the main target keywords, such as "Leading Supplier of Heavy & Road Construction Equipment".</p>
+                           </div>
+                        </div>
+
+                        <!-- Structured Data Card -->
+                        <div class="border border-slate-200 p-4 rounded-lg">
+                           <h3 class="font-bold text-lg flex items-center"><span class="status-dot status-improve mr-3"></span>Structured Data (Schema.org)</h3>
+                           <p class="mt-2 text-slate-700">No Schema.org structured data was detected. This markup helps search engines understand your content better and can enable rich snippets (e.g., star ratings, prices) in search results.</p>
+                           <div class="mt-3 bg-amber-50 p-3 rounded-md">
+                               <p class="font-semibold text-amber-800">Recommendation:</p>
+                               <p class="text-amber-700 text-sm">Implement `Organization` and `WebSite` schema on the homepage. For product/service pages, use `Product` or `Service` schema to provide detailed information to search engines.</p>
+                           </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Technical SEO Section -->
+                <section id="technical" class="content-section space-y-6 hidden">
+                    <div class="bg-white p-6 rounded-2xl shadow-lg">
+                        <h2 class="text-2xl font-bold mb-2 text-slate-900">Technical SEO</h2>
+                        <p class="text-slate-600 mb-6">This section focuses on the technical foundation of your website. A strong technical setup ensures that search engines can efficiently crawl, index, and render your pages without issues, forming the bedrock of any successful SEO strategy.</p>
+                        
+                        <!-- Robots.txt Card -->
+                        <div class="border border-slate-200 p-4 rounded-lg mb-4">
+                           <h3 class="font-bold text-lg flex items-center"><span class="status-dot status-error mr-3"></span>Robots.txt File</h3>
+                           <p class="mt-2 text-slate-700">A `robots.txt` file is missing. This file is essential for telling search engine crawlers which pages or sections of your site should not be indexed.</p>
+                           <div class="mt-3 bg-red-50 p-3 rounded-md">
+                               <p class="font-semibold text-red-800">Recommendation:</p>
+                               <p class="text-red-700 text-sm">Create a `robots.txt` file in the root directory of your website. A basic configuration that allows all crawlers access while pointing to your sitemap is recommended.</p>
+                               <pre class="bg-slate-800 text-white p-2 rounded mt-2 text-xs"><code>User-agent: *\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\n\nSitemap: https://www.rbasglobal.com/sitemap.xml</code></pre>
+                           </div>
+                        </div>
+
+                        <!-- XML Sitemap Card -->
+                        <div class="border border-slate-200 p-4 rounded-lg mb-4">
+                           <h3 class="font-bold text-lg flex items-center"><span class="status-dot status-improve mr-3"></span>XML Sitemap</h3>
+                           <p class="mt-2 text-slate-700">An XML sitemap was not found. Sitemaps help search engines discover all the important pages on your website and understand its structure.</p>
+                           <div class="mt-3 bg-amber-50 p-3 rounded-md">
+                               <p class="font-semibold text-amber-800">Recommendation:</p>
+                               <p class="text-amber-700 text-sm">Generate an XML sitemap and submit it to Google Search Console. Since the site uses WordPress, a plugin like Yoast SEO or Rank Math can automatically generate and update it for you.</p>
+                           </div>
+                        </div>
+
+                        <!-- Mobile Friendliness Card -->
+                        <div class="border border-slate-200 p-4 rounded-lg">
+                           <h3 class="font-bold text-lg flex items-center"><span class="status-dot status-pass mr-3"></span>Mobile Friendliness</h3>
+                           <p class="mt-2 text-slate-700">Congratulations, the website is mobile-friendly. However, the report noted an issue with tap targets being too small, which can frustrate mobile users.</p>
+                           <div class="mt-3 bg-amber-50 p-3 rounded-md">
+                               <p class="font-semibold text-amber-800">Recommendation:</p>
+                               <p class="text-amber-700 text-sm">Review buttons and links on mobile devices. Ensure they have adequate spacing and size (at least 48x48 pixels) to be easily tappable.</p>
+                           </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Performance Section -->
+                <section id="performance" class="content-section space-y-6 hidden">
+                     <div class="bg-white p-6 rounded-2xl shadow-lg">
+                        <h2 class="text-2xl font-bold mb-2 text-slate-900">Performance</h2>
+                        <p class="text-slate-600 mb-6">Website performance and page speed are critical ranking factors and vital for user experience. This section highlights opportunities to make your site faster, which can reduce bounce rates and improve conversions.</p>
+
+                        <!-- Image Optimization Card -->
+                        <div class="border border-slate-200 p-4 rounded-lg mb-4">
+                           <h3 class="font-bold text-lg flex items-center"><span class="status-dot status-error mr-3"></span>Image Optimization</h3>
+                           <p class="mt-2 text-slate-700">Images are not being served in next-gen formats (like WebP or AVIF) and are not efficiently encoded. This significantly increases page load times.</p>
+                           <div class="mt-3 bg-red-50 p-3 rounded-md">
+                               <p class="font-semibold text-red-800">Recommendation:</p>
+                               <ul class="list-disc list-inside text-red-700 text-sm space-y-1">
+                                    <li>Use a WordPress plugin (e.g., Smush, Imagify) to compress images and convert them to WebP format.</li>
+                                    <li>Ensure all `<img>` tags have explicit `width` and `height` attributes to prevent layout shifts.</li>
+                                    <li>Implement lazy loading for images that are below the fold.</li>
+                               </ul>
+                           </div>
+                        </div>
+
+                        <!-- Caching Card -->
+                        <div class="border border-slate-200 p-4 rounded-lg mb-4">
+                           <h3 class="font-bold text-lg flex items-center"><span class="status-dot status-improve mr-3"></span>Caching Policy</h3>
+                           <p class="mt-2 text-slate-700">A long-lived caching policy is not specified. Browser caching allows returning visitors to load the page much faster by storing assets like images and scripts locally.</p>
+                           <div class="mt-3 bg-amber-50 p-3 rounded-md">
+                               <p class="font-semibold text-amber-800">Recommendation:</p>
+                               <p class="text-amber-700 text-sm">Configure your server (or use a caching plugin on WordPress) to set long expiry times for static assets. A tool like WP Rocket or W3 Total Cache can handle this effectively.</p>
+                           </div>
+                        </div>
+
+                         <!-- Minification Card -->
+                        <div class="border border-slate-200 p-4 rounded-lg">
+                           <h3 class="font-bold text-lg flex items-center"><span class="status-dot status-improve mr-3"></span>JavaScript Minification</h3>
+                           <p class="mt-2 text-slate-700">JavaScript files could be minified to reduce their size, leading to faster download and execution times.</p>
+                           <div class="mt-3 bg-amber-50 p-3 rounded-md">
+                               <p class="font-semibold text-amber-800">Recommendation:</p>
+                               <p class="text-amber-700 text-sm">Use a performance optimization plugin for WordPress to automatically minify JavaScript and CSS files.</p>
+                           </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Security Section -->
+                <section id="security" class="content-section space-y-6 hidden">
+                     <div class="bg-white p-6 rounded-2xl shadow-lg">
+                        <h2 class="text-2xl font-bold mb-2 text-slate-900">Security</h2>
+                        <p class="text-slate-600 mb-6">Security is paramount for protecting your website, your users, and your brand's reputation. This section covers SSL encryption and email best practices to safeguard against common vulnerabilities.</p>
+                        
+                        <!-- SSL Card -->
+                        <div class="border border-slate-200 p-4 rounded-lg mb-4">
+                           <h3 class="font-bold text-lg flex items-center"><span class="status-dot status-pass mr-3"></span>SSL Certificate</h3>
+                           <p class="mt-2 text-slate-700">The website has a valid SSL certificate installed, ensuring that data transmitted between the user and the server is encrypted and secure (HTTPS).</p>
+                        </div>
+
+                        <!-- Email Privacy Card -->
+                        <div class="border border-slate-200 p-4 rounded-lg mb-4">
+                           <h3 class="font-bold text-lg flex items-center"><span class="status-dot status-improve mr-3"></span>Email Privacy</h3>
+                           <p class="mt-2 text-slate-700">Plain text email addresses were found on the site. This makes them vulnerable to being scraped by spam bots.</p>
+                            <div class="mt-3 bg-amber-50 p-3 rounded-md">
+                               <p class="font-semibold text-amber-800">Recommendation:</p>
+                               <p class="text-amber-700 text-sm">Obfuscate the email addresses using a JavaScript function or replace them with a contact form to protect them from scrapers.</p>
+                           </div>
+                        </div>
+
+                        <!-- DMARC Card -->
+                        <div class="border border-slate-200 p-4 rounded-lg">
+                           <h3 class="font-bold text-lg flex items-center"><span class="status-dot status-improve mr-3"></span>DMARC Record</h3>
+                           <p class="mt-2 text-slate-700">A DMARC (Domain-based Message Authentication, Reporting, and Conformance) record was not found for the domain. This helps prevent email spoofing and phishing attacks.</p>
+                            <div class="mt-3 bg-amber-50 p-3 rounded-md">
+                               <p class="font-semibold text-amber-800">Recommendation:</p>
+                               <p class="text-amber-700 text-sm">Add a DMARC TXT record to your domain's DNS settings. Start with a monitoring policy (`p=none`) to gather data before moving to a stricter policy like `p=quarantine` or `p=reject`.</p>
+                           </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Off-Page Presence Section -->
+                <section id="off-page" class="content-section space-y-6 hidden">
+                    <div class="bg-white p-6 rounded-2xl shadow-lg">
+                        <h2 class="text-2xl font-bold mb-2 text-slate-900">Off-Page Presence</h2>
+                        <p class="text-slate-600 mb-6">Off-page presence refers to your brand's visibility across the web, including backlinks from other websites and social media engagement. A strong off-page profile builds authority and drives referral traffic.</p>
+
+                        <!-- Backlinks Card -->
+                        <div class="border border-slate-200 p-4 rounded-lg mb-4">
+                           <h3 class="font-bold text-lg flex items-center"><span class="status-dot status-pass mr-3"></span>Backlinks</h3>
+                           <p class="mt-2 text-slate-700">The website has an established backlink profile with a score of <span class="font-semibold">56.6/100</span>. This indicates a solid foundation of links from other websites, which is a key signal of authority to search engines.</p>
+                        </div>
+                        
+                        <!-- Social Media Card -->
+                        <div class="border border-slate-200 p-4 rounded-lg">
+                           <h3 class="font-bold text-lg flex items-center"><span class="status-dot status-improve mr-3"></span>Social Media Profiles</h3>
+                           <p class="mt-2 text-slate-700">The site is linked to Facebook and LinkedIn, but Twitter and Instagram accounts were not found. There is significant engagement on Facebook, with <span class="font-semibold">729 shares</span> of the homepage.</p>
+                            <div class="mt-3 bg-amber-50 p-3 rounded-md">
+                               <p class="font-semibold text-amber-800">Recommendation:</p>
+                               <ul class="list-disc list-inside text-amber-700 text-sm space-y-1">
+                                    <li>If you have Twitter and Instagram accounts, ensure they are linked from your website.</li>
+                                    <li>If not, consider creating them to reach a wider audience and enhance brand presence.</li>
+                                    <li>Leverage the high Facebook engagement by creating more shareable content and promoting your Facebook page.</li>
+                               </ul>
+                           </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Score Chart
+            const ctx = document.getElementById('scoreChart').getContext('2d');
+            const score = 73;
+            const data = {
+                datasets: [{
+                    data: [score, 100 - score],
+                    backgroundColor: ['#3b82f6', '#e2e8f0'],
+                    borderWidth: 0,
+                    borderRadius: 20,
+                    cutout: '80%'
+                }]
+            };
+            const options = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: { enabled: false }
+                },
+                animation: {
+                    animateRotate: true,
+                    duration: 1500
+                }
+            };
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: data,
+                options: options
+            });
+
+            // Tab Navigation
+            const navLinks = document.querySelectorAll('.nav-link');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    const targetId = link.getAttribute('data-target');
+
+                    // Update nav link styles
+                    navLinks.forEach(navLink => navLink.classList.remove('active'));
+                    link.classList.add('active');
+
+                    // Show/hide content sections
+                    contentSections.forEach(section => {
+                        if (section.id === targetId) {
+                            section.classList.remove('hidden');
+                        } else {
+                            section.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
